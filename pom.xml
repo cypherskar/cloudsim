@@ -1,99 +1,166 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.cloudbus.cloudsim</groupId>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.cloudbus.cloudsim</groupId>
   <artifactId>cloudsim-package</artifactId>
-  <version>4.0</version>
-  <packaging>pom</packaging>
-  <name>cloudsim-package</name>
-  <description>CloudSim: A Framework For Modeling And Simulation Of Cloud Computing Infrastructures And Services</description>
-  <url>http://www.cloudbus.org/cloudsim/</url>
-  
-  <properties>
-  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-  
-  <modules>
-  	<module>modules</module>
-  	<module>documentation</module>
-  	<module>distribution</module>
-  </modules>
+	<version>4.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>cloudsim-toolkit</name>
+	<description>CloudSim: A Framework For Modeling And Simulation Of Cloud Computing Infrastructures And Services</description>
+	<url>http://www.cloudbus.org/cloudsim/</url>
   
   <organization>
   	<name>The Cloud Computing and Distributed Systems (CLOUDS) Laboratory, The University of Melbourne</name>
   	<url>http://cloudbus.org/</url>
   </organization>
+
+  <properties>
+		<jdk.version>1.8</jdk.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven-javadoc-plugin.version>3.0.0</maven-javadoc-plugin.version>
+    <maven-compiler-plugin-version>2.3.2</maven-compiler-plugin-version>
+		<felix-version>2.0.1</felix-version>
+	</properties>
+
+	<distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub cypherskar Apache Maven Packages</name>
+      <url>https://maven.pkg.github.com/cypherskar/cloudsim</url>
+    </repository>
+  </distributionManagement>
   
-  <build>
-  	<pluginManagement>
-  		<plugins>
-  			<plugin>
-  				<groupId>org.apache.maven.plugins</groupId>
-  				<artifactId>maven-compiler-plugin</artifactId>
-  				<version>2.3.2</version>
-  				<configuration>
-  					<source>1.8</source>
-  					<target>1.8</target>
-  				</configuration>
-  			</plugin>
-  		</plugins>
-  	</pluginManagement>
-  </build>  
+  <modules>
+  	<module>cloudsim</module>
+  	<module>cloudsim-examples</module>
+  </modules>
   
-  <distributionManagement>
-	<repository>
-		<id>localrepo</id>
-		<name>LocalRepository</name>
-		<url>file:///${project.build.directory}/deployment-artifacts</url>
-	</repository>
-  </distributionManagement> 
-  
-  <dependencyManagement>
-  	<dependencies>
-  		<dependency>
-  			<groupId>${project.groupId}</groupId>
-  			<artifactId>modules</artifactId>
-  			<version>${project.version}</version>
-  		</dependency>
-  		<dependency>
-  			<groupId>${project.groupId}</groupId>
-  			<artifactId>cloudsim</artifactId>
-  			<version>${project.version}</version>
-  		</dependency>
-  		<dependency>
-  			<groupId>${project.groupId}</groupId>
-  			<artifactId>cloudsim-examples</artifactId>
-  			<version>${project.version}</version>
-  		</dependency>
-  		<dependency>
-  			<groupId>${project.groupId}</groupId>
-  			<artifactId>documentation</artifactId>
-  			<version>${project.version}</version>
-  		</dependency>
-  		<dependency>
-  			<groupId>${project.groupId}</groupId>
-  			<artifactId>distribution</artifactId>
-  			<version>${project.version}</version>
-  		</dependency>
-  		
-  		<dependency>
-  			<groupId>junit</groupId>
-  			<artifactId>junit</artifactId>
-  			<version>4.13.1</version>
-  			<scope>test</scope>
-  		</dependency>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.1</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
 			<version>3.1</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymockclassextension</artifactId>
 			<version>3.1</version>
 			<scope>test</scope>
-		</dependency>  		  		
-  	</dependencies>
-  </dependencyManagement>
+		</dependency> 
+	
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math3</artifactId>
+			<version>3.3</version>
+		</dependency>
+
+	</dependencies>
+  
+  <build>
+    <finalName>${artifactId}-${project.version}</finalName>
+
+		<directory>${user.dir}-release/${artifactId}</directory>
+    <outputDirectory>${project.build.directory}/classes</outputDirectory>  
+    <testOutputDirectory>${project.build.directory}/test-classes</testOutputDirectory>  
+    <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>  
+    <scriptSourceDirectory>${project.basedir}/src/main/scripts</scriptSourceDirectory>  
+    <testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>  
+
+
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.1</version>
+			</plugin>
+
+			<!-- Sets the version of the code -->
+      <plugin>
+      	<groupId>org.apache.maven.plugins</groupId>
+      		<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.8.1</version>
+      		<configuration>
+      		<source>8</source>
+      		<target>8</target>
+      		</configuration>
+      </plugin>
+
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.1.2</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+              <!--goal>test-jar</goal-->
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.0.1</version>
+				<configuration>
+					<maxmemory>1024</maxmemory>
+					<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+				</configuration>
+			</plugin>
+		</plugins>
+  </build>  
+  
+  <profiles>
+		<profile>
+			<id>activator</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<bundlor.enabled>true</bundlor.enabled>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.felix</groupId>
+						<artifactId>maven-bundle-plugin</artifactId>
+						<version>${felix-version}</version>
+						<extensions>true</extensions>
+						<configuration>
+							<instructions>
+								<Bundle-Name>cloudsim-toolkit</Bundle-Name>
+								<Bundle-SymbolicName>cloudsim-toolkit</Bundle-SymbolicName>
+								<Import-Package>org.apache.log4j;resolution:=optional</Import-Package>
+								<Export-Package>org.cloudbus.cloudsim.*;version="${project.version}"</Export-Package>
+							</instructions>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+  
     
 </project>
